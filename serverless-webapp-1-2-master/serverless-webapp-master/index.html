@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="jquery-3.1.1.min.js"></script>
+    <script src="knockout-3.4.2.js"></script>
+    <script type="text/javascript">
+        
+
+        $(document).ready(function() {
+
+            var employeeViewModel = function() {
+            var self = this;
+	    self.address = ko.observable("");
+	    self.mobilenumber = ko.observable("");
+            self.firstName = ko.observable("");
+            self.lastName = ko.observable("");
+            self.emailId = ko.observable("");
+            self.searchKey = ko.observable("");
+
+            self.getEmployeeDetails = function () {              
+                $.ajax({
+                    url: 'https://z0ehkc0rab.execute-api.us-east-1.amazonaws.com/Dev/getemployeedetailsbyemail',
+                    cache: false,
+                    type: 'GET',                   
+                    data: { "EmailID": self.searchKey() },
+                    success: function (data) {            
+			self.address(data.Item.Address)
+			self.mobilenumber(data.Item.MobileNumber)  
+                        self.firstName(data.Item.FirstName)
+                        self.lastName(data.Item.LastName),
+                        self.emailId(data.Item.EmailID)
+                    }
+                });
+            }
+        }
+
+            var viewModel = new employeeViewModel();
+            ko.applyBindings(viewModel);
+         });
+
+       
+    </script>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <table>
+        <tr>
+            <td>Search Key(EmailID):</td>
+            <td><input type="text" id="txtSearchKey" data-bind="value : searchKey"/></td>
+        </tr>
+    </table>
+
+    <br />
+  
+    <table id="EmployeeDetails">
+        <thead>
+            <tr>
+                <td>First Name:</td>
+                <td><label id="firstName" data-bind="text: firstName"/></td>
+            </tr>
+
+            <tr>
+                <td>Last Name:</td>
+                <td><label id="lastName" data-bind="text: lastName"/></td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td><label id="emailId" data-bind="text: emailId"/></td>
+            </tr>
+	    <tr>
+                <td>M Number:</td>
+                <td><label id="mobilenumber" data-bind="text: mobilenumber"/></td>
+            </tr>
+	    <tr>
+                <td>Address:</td>
+                <td><label id="address" data-bind="text: address"/></td>
+            </tr>
+          
+        </thead>
+      
+        </table>
+
+    <br />
+  
+  <table>
+<tr>
+    <td><input type="button" value="GetEmployeeDetails" data-bind="click: $root.getEmployeeDetails()"/></td>
+    <td>
+	<input type="button" onclick="location.href='http://dharmilprajapatisaveemployee.s3-website-us-east-1.amazonaws.com/';" value="SaveEmployeeDetails" />
+    </td>
+</tr>
+  </table>
+</body>
+</html>
+
